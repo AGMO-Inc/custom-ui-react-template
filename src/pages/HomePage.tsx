@@ -1,4 +1,4 @@
-import { useState } from 'react'
+import { useState, useRef, useEffect } from 'react'
 import {
   createWebSocketClient,
   sendJson,
@@ -7,41 +7,51 @@ import {
 
 export function HomePage() {
   const [message, setMessage] = useState('')
+  const clientRef = useRef<ReturnType<typeof createWebSocketClient> | null>(null)
 
-  /** CCU 배포 시 세팅 */
-  const client = createWebSocketClient('ws://192.168.32.1/socket', {
-    useCCUPort: true,
-    defaultPort: 1456,
-    ccuPortEndpoint: 'get_assigned_ports',
-    autoReconnect: true,
-    events: {
-      open: () => console.log('connected'),
-      message: (event) => console.log('message', event.data),
-      close: () => console.log('socket closed'),
-    },
-  });
+  useEffect(() => {
+    /** CCU 배포 시 세팅 */
+    const client = createWebSocketClient('ws://192.168.32.1/socket', {
+      useCCUPort: true,
+      defaultPort: 1456,
+      ccuPortEndpoint: 'get_assigned_ports',
+      autoReconnect: true,
+      events: {
+        open: () => console.log('connected'),
+        message: (event) => console.log('message', event.data),
+        close: () => console.log('socket closed'),
+      },
+    });
 
-  /** local test 세팅 */
-  // const client = createWebSocketClient('ws://127.0.0.1/socket', {
-  //   useCCUPort: false,
-  //   manualPort: 8081,
-  //   autoReconnect: true,
-  //   reconnectInterval: 3000,
-  //   events: {
-  //     open: () => console.log('connected'),
-  //     message: (event) => console.log('message', event.data),
-  //     close: () => console.log('socket closed'),
-  //   },
-  // });
+    /** local test 세팅 */
+    // const client = createWebSocketClient('ws://127.0.0.1/socket', {
+    //   useCCUPort: false,
+    //   manualPort: 8081,
+    //   autoReconnect: true,
+    //   reconnectInterval: 3000,
+    //   events: {
+    //     open: () => console.log('connected'),
+    //     message: (event) => console.log('message', event.data),
+    //     close: () => console.log('socket closed'),
+    //   },
+    // })
+
+    clientRef.current = client
+
+    return () => {
+      closeWebSocketSafe(client.socket, 1000, 'unmount')
+    }
+  }, [])
 
   const handleSend = () => {
-    if (!message.trim()) return
-    sendJson(client.socket, { type: 'message', data: message })
+    if (!message.trim() || !clientRef.current) return
+    sendJson(clientRef.current.socket, { type: 'message', data: message })
     setMessage('')
   }
 
   const handleClose = () => {
-    closeWebSocketSafe(client.socket, 1000, 'done')
+    if (!clientRef.current) return
+    closeWebSocketSafe(clientRef.current.socket, 1000, 'done')
   }
 
   return (
