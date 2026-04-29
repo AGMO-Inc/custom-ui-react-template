@@ -8,14 +8,14 @@ export function LibraryPage() {
         </p>
       </div>
 
-      {/* @seamos/websocket */}
+      {/* @seamos/connect */}
       <div className="rounded-lg border border-gray-200 bg-white p-6 shadow-sm">
         <div className="flex items-center gap-3">
           <h2 className="text-lg font-semibold text-gray-900">
-            @seamos/websocket
+            @seamos/connect
           </h2>
           <a
-            href="https://www.npmjs.com/package/@seamos/websocket"
+            href="https://www.npmjs.com/package/@seamos/connect"
             target="_blank"
             rel="noopener noreferrer"
             className="rounded-full bg-red-100 px-2.5 py-0.5 text-xs font-medium text-red-700 hover:bg-red-200"
@@ -24,59 +24,94 @@ export function LibraryPage() {
           </a>
         </div>
         <p className="mt-2 text-sm text-gray-600">
-          브라우저 WebSocket을 감싸는 경량 헬퍼 라이브러리입니다. 자동 재연결,
-          동적 포트 선택(수동 또는 CCU 기반), JSON 유틸리티를 제공하며
-          의존성 없이 동작합니다.
+          SeamOS 런타임에서 할당된 포트를 자동으로 해석해 REST와 WebSocket
+          통신을 연결하는 공식 헬퍼 라이브러리입니다. 기존 WebSocket 전용
+          라이브러리 대신 앱 UI 개발에서는 이 패키지를 사용합니다.
         </p>
 
         <div className="mt-4">
           <h3 className="text-sm font-semibold text-gray-800">주요 기능</h3>
           <ul className="mt-2 list-inside list-disc space-y-1 text-sm text-gray-600">
-            <li>예기치 않은 연결 해제 시 자동 재연결</li>
-            <li>수동 포트 지정 또는 CCU 엔드포인트를 통한 동적 포트 할당</li>
-            <li>네이티브 WebSocket 이벤트 훅 (open, message, close, error)</li>
-            <li>JSON 페이로드 안전 전송 및 방어적 소켓 종료</li>
+            <li>
+              <code>get_assigned_ports</code>를 통한 SeamOS assigned port 초기화
+            </li>
+            <li>할당된 포트를 사용하는 REST fetch wrapper</li>
+            <li>path 기반 WebSocket client 생성 및 자동 재연결</li>
+            <li>JSON WebSocket 전송과 안전한 연결 종료 유틸리티</li>
           </ul>
         </div>
 
         <div className="mt-4">
           <h3 className="text-sm font-semibold text-gray-800">설치</h3>
           <pre className="mt-2 rounded-md bg-gray-50 p-3 text-sm text-gray-700">
-            npm install @seamos/websocket
+            npm install @seamos/connect
           </pre>
           <a
-            href="https://www.npmjs.com/package/@seamos/websocket"
+            href="https://www.npmjs.com/package/@seamos/connect"
             target="_blank"
             rel="noopener noreferrer"
             className="mt-2 inline-block text-sm text-blue-600 hover:underline"
           >
-            https://www.npmjs.com/package/@seamos/websocket
+            https://www.npmjs.com/package/@seamos/connect
           </a>
         </div>
 
         <div className="mt-4">
-          <h3 className="text-sm font-semibold text-gray-800">사용 예제</h3>
+          <h3 className="text-sm font-semibold text-gray-800">
+            REST 사용 예제
+          </h3>
           <pre className="mt-2 overflow-x-auto rounded-md bg-gray-50 p-3 text-sm text-gray-700">
-{`import {
-  createWebSocketClient,
-  sendJson,
-  closeWebSocketSafe,
-} from '@seamos/websocket'
+            {`import { initPorts, seamosFetch } from '@seamos/connect'
 
-const client = createWebSocketClient('ws://192.168.0.10/socket', {
-  useCCUPort: false,
-  manualPort: 8080,
+await initPorts()
+
+const response = await seamosFetch('/api/example/status')
+if (!response.ok) {
+  throw new Error(\`HTTP \${response.status}\`)
+}
+
+const data = await response.json()
+console.log(data)`}
+          </pre>
+        </div>
+
+        <div className="mt-4">
+          <h3 className="text-sm font-semibold text-gray-800">
+            WebSocket 사용 예제
+          </h3>
+          <pre className="mt-2 overflow-x-auto rounded-md bg-gray-50 p-3 text-sm text-gray-700">
+            {`import {
+  createWebSocketClient,
+  initPorts,
+  sendJson,
+} from '@seamos/connect'
+
+await initPorts()
+
+const client = createWebSocketClient('/ws/example', {
   autoReconnect: true,
   reconnectInterval: 3000,
   events: {
-    open: () => console.log('connected'),
+    open: () => {
+      sendJson(client.socket, {
+        type: 'example.subscribe',
+        requestId: 'example-ws-001',
+        payload: { channel: 'example.status' },
+      })
+    },
     message: (event) => console.log('message', event.data),
     close: () => console.log('socket closed'),
+    error: () => console.log('socket error'),
   },
 })
 
-sendJson(client.socket, { type: 'ping' })
-closeWebSocketSafe(client.socket, 1000, 'done')`}
+sendJson(client.socket, {
+  type: 'example.ping',
+  requestId: 'example-ws-002',
+  payload: { message: 'hello' },
+})
+
+client.close(1000, 'done')`}
           </pre>
         </div>
 
@@ -84,38 +119,56 @@ closeWebSocketSafe(client.socket, 1000, 'done')`}
           <h3 className="text-sm font-semibold text-gray-800">API</h3>
           <div className="mt-2 space-y-2 text-sm text-gray-600">
             <div>
+              <code className="font-semibold text-gray-800">initPorts()</code>
+              <span className="ml-2">
+                — SeamOS 런타임의 <code>get_assigned_ports</code>를 호출해 통신
+                포트를 초기화
+              </span>
+            </div>
+            <div>
               <code className="font-semibold text-gray-800">
-                createWebSocketClient(baseUrl, options)
+                createWebSocketClient(path, options)
               </code>
               <span className="ml-2">
-                — WebSocket 연결을 생성하고 socket, close()를 반환
+                — 할당된 포트로 WebSocket을 생성. path는{' '}
+                <code>/ws/example</code>처럼 leading slash 포함
+              </span>
+            </div>
+            <div>
+              <code className="font-semibold text-gray-800">
+                seamosFetch(path, init?)
+              </code>
+              <span className="ml-2">
+                — 할당된 포트로 REST 요청을 보내는 fetch wrapper
               </span>
             </div>
             <div>
               <code className="font-semibold text-gray-800">
                 sendJson(socket, payload)
               </code>
-              <span className="ml-2">
-                — JSON 직렬화 후 열린 소켓으로 전송
-              </span>
+              <span className="ml-2">— JSON 직렬화 후 열린 소켓으로 전송</span>
             </div>
             <div>
               <code className="font-semibold text-gray-800">
                 closeWebSocketSafe(socket, code?, reason?)
               </code>
               <span className="ml-2">
-                — 소켓이 열려 있을 때만 안전하게 종료
+                — 소켓이 닫힌 상태여도 예외 없이 종료 시도
               </span>
             </div>
             <div>
               <code className="font-semibold text-gray-800">
-                isProperJson(payload)
+                getAssignedPort()
               </code>
-              <span className="ml-2">
-                — 객체 또는 파싱 가능한 JSON 문자열인지 확인
-              </span>
+              <span className="ml-2">— 초기화된 assigned port 조회</span>
             </div>
           </div>
+        </div>
+
+        <div className="mt-4 rounded-md bg-blue-50 p-4 text-sm text-blue-800">
+          로컬 Vite 개발 서버만 실행하면 <code>get_assigned_ports</code>가 없어
+          초기화가 실패할 수 있습니다. 실제 SeamOS 런타임 또는 해당 endpoint를
+          제공하는 개발 프록시에서 REST/WebSocket 예제를 테스트하세요.
         </div>
       </div>
 
