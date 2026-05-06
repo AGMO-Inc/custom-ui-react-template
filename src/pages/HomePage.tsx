@@ -322,12 +322,16 @@ export function HomePage() {
 ├── routes/             # 파일 기반 라우팅 (자동 생성)
 │   ├── __root.tsx      # 루트 레이아웃
 │   ├── index.tsx       # 홈 페이지 라우트
-│   └── library.tsx     # 라이브러리 안내 페이지 라우트
+│   ├── library.tsx     # 라이브러리 안내 페이지 라우트
+│   ├── map.tsx         # @seamos/map-preset 지도 예제 라우트
+│   └── bridge.tsx      # @seamos/bridge WebView 예제 라우트
 ├── layouts/
 │   └── RootLayout.tsx  # 공통 레이아웃 (네비게이션)
 └── pages/
     ├── HomePage.tsx    # Connect REST/WebSocket 예제
-    └── LibraryPage.tsx # SeamOS 라이브러리 안내`}
+    ├── LibraryPage.tsx # SeamOS 라이브러리 안내
+    ├── MapPage.tsx     # MapLibre/PMTiles 지도 예제
+    └── BridgePage.tsx  # WebView/native bridge 예제`}
         </pre>
       </div>
 
@@ -373,6 +377,18 @@ export function HomePage() {
             <span>
               — SeamOS 런타임 assigned port 기반 REST/WebSocket 연결 헬퍼
             </span>
+          </div>
+          <div className="flex items-start gap-3">
+            <span className="font-mono font-semibold text-gray-900">
+              @seamos/map-preset
+            </span>
+            <span>— MapLibre + PMTiles 기반 SeamOS 지도 프리셋</span>
+          </div>
+          <div className="flex items-start gap-3">
+            <span className="font-mono font-semibold text-gray-900">
+              @seamos/bridge
+            </span>
+            <span>— Cockpit/WebView native 연동 브릿지</span>
           </div>
         </div>
       </div>
