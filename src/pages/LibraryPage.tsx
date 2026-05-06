@@ -4,16 +4,43 @@ export function LibraryPage() {
       <div>
         <h1 className="text-3xl font-bold text-gray-900">Library</h1>
         <p className="mt-2 text-gray-600">
-          SeamOS 앱 개발에 사용할 수 있는 공식 라이브러리 목록입니다.
+          SeamOS Custom UI 앱 개발에 사용할 수 있는 공식 <code>@seamos</code>{' '}
+          라이브러리와 선택 기준입니다.
         </p>
       </div>
 
-      {/* @seamos/connect */}
+      <div className="rounded-lg border border-blue-200 bg-blue-50 p-6 text-sm text-blue-900">
+        <h2 className="text-base font-semibold">선택 가이드</h2>
+        <ul className="mt-3 list-inside list-disc space-y-1">
+          <li>
+            REST/WebSocket 통신은 기본 포함된 <code>@seamos/connect</code>를
+            사용합니다.
+          </li>
+          <li>
+            지도 UI가 필요한 앱은 <code>@seamos/map-preset</code>,{' '}
+            <code>maplibre-gl</code>, <code>pmtiles</code>를 사용합니다. 이
+            템플릿에는 실행 샘플을 위해 포함되어 있으며, 지도 기능이 필요 없으면{' '}
+            <code>/map</code> route와 관련 dependency를 제거해도 됩니다.
+          </li>
+          <li>
+            Cockpit WebView native 연동은 <code>@seamos/bridge</code>를
+            사용합니다. 이 템플릿에는 WebView 샘플을 위해 포함되어 있습니다.
+          </li>
+          <li>
+            <code>@seamos/websocket</code>은 deprecated입니다. 신규 앱에서는
+            추가하지 말고 <code>@seamos/connect</code>로 이전하세요.
+          </li>
+        </ul>
+      </div>
+
       <div className="rounded-lg border border-gray-200 bg-white p-6 shadow-sm">
         <div className="flex items-center gap-3">
           <h2 className="text-lg font-semibold text-gray-900">
             @seamos/connect
           </h2>
+          <span className="rounded-full bg-green-100 px-2.5 py-0.5 text-xs font-medium text-green-700">
+            기본 포함
+          </span>
           <a
             href="https://www.npmjs.com/package/@seamos/connect"
             target="_blank"
@@ -25,159 +52,49 @@ export function LibraryPage() {
         </div>
         <p className="mt-2 text-sm text-gray-600">
           SeamOS 런타임에서 할당된 포트를 자동으로 해석해 REST와 WebSocket
-          통신을 연결하는 공식 헬퍼 라이브러리입니다. 기존 WebSocket 전용
-          라이브러리 대신 앱 UI 개발에서는 이 패키지를 사용합니다.
+          통신을 연결하는 기본 헬퍼 라이브러리입니다.
         </p>
-
-        <div className="mt-4">
-          <h3 className="text-sm font-semibold text-gray-800">주요 기능</h3>
-          <ul className="mt-2 list-inside list-disc space-y-1 text-sm text-gray-600">
-            <li>
-              <code>get_assigned_ports</code>를 통한 SeamOS assigned port 초기화
-            </li>
-            <li>할당된 포트를 사용하는 REST fetch wrapper</li>
-            <li>path 기반 WebSocket client 생성 및 자동 재연결</li>
-            <li>JSON WebSocket 전송과 안전한 연결 종료 유틸리티</li>
-          </ul>
-        </div>
-
-        <div className="mt-4">
-          <h3 className="text-sm font-semibold text-gray-800">설치</h3>
-          <pre className="mt-2 rounded-md bg-gray-50 p-3 text-sm text-gray-700">
-            npm install @seamos/connect
-          </pre>
-          <a
-            href="https://www.npmjs.com/package/@seamos/connect"
-            target="_blank"
-            rel="noopener noreferrer"
-            className="mt-2 inline-block text-sm text-blue-600 hover:underline"
-          >
-            https://www.npmjs.com/package/@seamos/connect
-          </a>
-        </div>
-
-        <div className="mt-4">
-          <h3 className="text-sm font-semibold text-gray-800">
-            REST 사용 예제
-          </h3>
-          <pre className="mt-2 overflow-x-auto rounded-md bg-gray-50 p-3 text-sm text-gray-700">
-            {`import { initPorts, seamosFetch } from '@seamos/connect'
+        <div className="mt-4 grid gap-4 lg:grid-cols-2">
+          <div>
+            <h3 className="text-sm font-semibold text-gray-800">REST</h3>
+            <pre className="mt-2 overflow-x-auto rounded-md bg-gray-50 p-3 text-sm text-gray-700">
+              {`import { initPorts, seamosFetch } from '@seamos/connect'
 
 await initPorts()
 
 const response = await seamosFetch('/api/example/status')
-if (!response.ok) {
-  throw new Error(\`HTTP \${response.status}\`)
-}
-
-const data = await response.json()
-console.log(data)`}
-          </pre>
-        </div>
-
-        <div className="mt-4">
-          <h3 className="text-sm font-semibold text-gray-800">
-            WebSocket 사용 예제
-          </h3>
-          <pre className="mt-2 overflow-x-auto rounded-md bg-gray-50 p-3 text-sm text-gray-700">
-            {`import {
-  createWebSocketClient,
-  initPorts,
-  sendJson,
-} from '@seamos/connect'
+const data = await response.json()`}
+            </pre>
+          </div>
+          <div>
+            <h3 className="text-sm font-semibold text-gray-800">WebSocket</h3>
+            <pre className="mt-2 overflow-x-auto rounded-md bg-gray-50 p-3 text-sm text-gray-700">
+              {`import { createWebSocketClient, initPorts, sendJson } from '@seamos/connect'
 
 await initPorts()
 
 const client = createWebSocketClient('/ws/example', {
   autoReconnect: true,
-  reconnectInterval: 3000,
   events: {
-    open: () => {
-      sendJson(client.socket, {
-        type: 'example.subscribe',
-        requestId: 'example-ws-001',
-        payload: { channel: 'example.status' },
-      })
-    },
-    message: (event) => console.log('message', event.data),
-    close: () => console.log('socket closed'),
-    error: () => console.log('socket error'),
+    open: () => sendJson(client.socket, { type: 'example.subscribe' }),
+    message: (event) => console.log(event.data),
   },
 })
 
-sendJson(client.socket, {
-  type: 'example.ping',
-  requestId: 'example-ws-002',
-  payload: { message: 'hello' },
-})
-
 client.close(1000, 'done')`}
-          </pre>
-        </div>
-
-        <div className="mt-4">
-          <h3 className="text-sm font-semibold text-gray-800">API</h3>
-          <div className="mt-2 space-y-2 text-sm text-gray-600">
-            <div>
-              <code className="font-semibold text-gray-800">initPorts()</code>
-              <span className="ml-2">
-                — SeamOS 런타임의 <code>get_assigned_ports</code>를 호출해 통신
-                포트를 초기화
-              </span>
-            </div>
-            <div>
-              <code className="font-semibold text-gray-800">
-                createWebSocketClient(path, options)
-              </code>
-              <span className="ml-2">
-                — 할당된 포트로 WebSocket을 생성. path는{' '}
-                <code>/ws/example</code>처럼 leading slash 포함
-              </span>
-            </div>
-            <div>
-              <code className="font-semibold text-gray-800">
-                seamosFetch(path, init?)
-              </code>
-              <span className="ml-2">
-                — 할당된 포트로 REST 요청을 보내는 fetch wrapper
-              </span>
-            </div>
-            <div>
-              <code className="font-semibold text-gray-800">
-                sendJson(socket, payload)
-              </code>
-              <span className="ml-2">— JSON 직렬화 후 열린 소켓으로 전송</span>
-            </div>
-            <div>
-              <code className="font-semibold text-gray-800">
-                closeWebSocketSafe(socket, code?, reason?)
-              </code>
-              <span className="ml-2">
-                — 소켓이 닫힌 상태여도 예외 없이 종료 시도
-              </span>
-            </div>
-            <div>
-              <code className="font-semibold text-gray-800">
-                getAssignedPort()
-              </code>
-              <span className="ml-2">— 초기화된 assigned port 조회</span>
-            </div>
+            </pre>
           </div>
-        </div>
-
-        <div className="mt-4 rounded-md bg-blue-50 p-4 text-sm text-blue-800">
-          로컬 Vite 개발 서버만 실행하면 <code>get_assigned_ports</code>가 없어
-          초기화가 실패할 수 있습니다. 실제 SeamOS 런타임 또는 해당 endpoint를
-          제공하는 개발 프록시에서 REST/WebSocket 예제를 테스트하세요.
         </div>
       </div>
 
-      {/* @seamos/map-preset */}
       <div className="rounded-lg border border-gray-200 bg-white p-6 shadow-sm">
         <div className="flex items-center gap-3">
           <h2 className="text-lg font-semibold text-gray-900">
             @seamos/map-preset
           </h2>
+          <span className="rounded-full bg-gray-100 px-2.5 py-0.5 text-xs font-medium text-gray-700">
+            지도 앱 선택 설치
+          </span>
           <a
             href="https://www.npmjs.com/package/@seamos/map-preset"
             target="_blank"
@@ -188,35 +105,89 @@ client.close(1000, 'done')`}
           </a>
         </div>
         <p className="mt-2 text-sm text-gray-600">
-          SeamOS 애플리케이션을 위한 MapLibre 래퍼 라이브러리입니다. PMTiles
-          기반의 벡터 및 지형 지도를 제공하며, 개발(S3)과 프로덕션(디바이스 로컬
-          서버) 환경 간 자동 전환을 지원합니다.
+          MapLibre GL과 PMTiles를 사용해 dev(S3)와 prod(디바이스 로컬{' '}
+          <code>/maps</code>) 환경을 전환하는 지도 프리셋입니다. 실행 예제는{' '}
+          <code>/map</code> 라우트에서 확인할 수 있습니다.
         </p>
-
-        <div className="mt-4">
-          <h3 className="text-sm font-semibold text-gray-800">주요 기능</h3>
-          <ul className="mt-2 list-inside list-disc space-y-1 text-sm text-gray-600">
-            <li>MapLibre GL JS 래퍼 (브라우저 전용)</li>
-            <li>PMTiles 프로토콜 자동 등록</li>
-            <li>dev/prod 환경에 따른 PMTiles 기본 URL 자동 관리</li>
-            <li>내장 스타일 프리셋 (basic, terrain 등)</li>
-            <li>Vanilla JS, Vue, React, Next.js 클라이언트 사이드 지원</li>
-          </ul>
-        </div>
-
         <div className="mt-4">
           <h3 className="text-sm font-semibold text-gray-800">설치</h3>
-          <pre className="mt-2 rounded-md bg-gray-50 p-3 text-sm text-gray-700">
+          <pre className="mt-2 overflow-x-auto rounded-md bg-gray-50 p-3 text-sm text-gray-700">
             npm install @seamos/map-preset maplibre-gl pmtiles
           </pre>
+        </div>
+        <div className="mt-4">
+          <h3 className="text-sm font-semibold text-gray-800">React 예제</h3>
+          <pre className="mt-2 overflow-x-auto rounded-md bg-gray-50 p-3 text-sm text-gray-700">
+            {`import { useEffect, useRef } from 'react'
+import { createSeamOSMap } from '@seamos/map-preset'
+import 'maplibre-gl/dist/maplibre-gl.css'
+
+export function MapView() {
+  const ref = useRef<HTMLDivElement>(null)
+
+  useEffect(() => {
+    if (!ref.current) return
+
+    const map = createSeamOSMap({
+      container: ref.current,
+      preset: 'basic',
+      env: 'dev',
+    })
+
+    map.on('load', () => console.log('map loaded'))
+
+    return () => map.remove()
+  }, [])
+
+  return <div ref={ref} className="h-[420px]" />
+}`}
+          </pre>
+        </div>
+      </div>
+
+      <div className="rounded-lg border border-gray-200 bg-white p-6 shadow-sm">
+        <div className="flex items-center gap-3">
+          <h2 className="text-lg font-semibold text-gray-900">
+            @seamos/bridge
+          </h2>
+          <span className="rounded-full bg-gray-100 px-2.5 py-0.5 text-xs font-medium text-gray-700">
+            WebView 선택 설치
+          </span>
           <a
-            href="https://www.npmjs.com/package/@seamos/map-preset"
+            href="https://www.npmjs.com/package/@seamos/bridge"
             target="_blank"
             rel="noopener noreferrer"
-            className="mt-2 inline-block text-sm text-blue-600 hover:underline"
+            className="rounded-full bg-red-100 px-2.5 py-0.5 text-xs font-medium text-red-700 hover:bg-red-200"
           >
-            https://www.npmjs.com/package/@seamos/map-preset
+            npm
           </a>
+        </div>
+        <p className="mt-2 text-sm text-gray-600">
+          React Native WebView와 Custom UI 사이에서 settings, location, haptic,
+          vibration, file download, custom message를 주고받는 타입 안전
+          bridge입니다. 실행 예제는 <code>/bridge</code> 라우트에서 확인할 수
+          있습니다.
+        </p>
+        <div className="mt-4">
+          <h3 className="text-sm font-semibold text-gray-800">WebView 예제</h3>
+          <pre className="mt-2 overflow-x-auto rounded-md bg-gray-50 p-3 text-sm text-gray-700">
+            {`import { bridge, BridgeEvent } from '@seamos/bridge/webview'
+
+const unsubscribe = bridge.addListener(
+  BridgeEvent.SETTINGS_UPDATE,
+  (settings) => console.log(settings),
+)
+
+bridge.triggerHaptic('success')
+bridge.sendCustom('example:ping', { message: 'hello' })
+
+unsubscribe()`}
+          </pre>
+        </div>
+        <div className="mt-4 rounded-md bg-yellow-50 p-4 text-sm text-yellow-800">
+          일반 브라우저에서는 ReactNativeWebView가 없으므로 native 요청은 실제로
+          처리되지 않습니다. SeamOS Cockpit WebView 또는 테스트 harness에서
+          검증하세요.
         </div>
       </div>
     </div>

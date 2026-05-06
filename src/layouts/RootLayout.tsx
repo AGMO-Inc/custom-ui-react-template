@@ -3,6 +3,8 @@ import { Outlet, Link, useRouterState } from '@tanstack/react-router'
 const navLinks = [
   { to: '/', label: 'Home' },
   { to: '/library', label: 'Library' },
+  { to: '/map', label: 'Map' },
+  { to: '/bridge', label: 'Bridge' },
 ] as const
 
 export function RootLayout() {
