@@ -11,6 +11,7 @@
 import { Route as rootRouteImport } from './routes/__root'
 import { Route as MapRouteImport } from './routes/map'
 import { Route as LibraryRouteImport } from './routes/library'
+import { Route as ExternalApiRouteImport } from './routes/external-api'
 import { Route as BridgeRouteImport } from './routes/bridge'
 import { Route as IndexRouteImport } from './routes/index'
 
@@ -22,6 +23,11 @@ const MapRoute = MapRouteImport.update({
 const LibraryRoute = LibraryRouteImport.update({
   id: '/library',
   path: '/library',
+  getParentRoute: () => rootRouteImport,
+} as any)
+const ExternalApiRoute = ExternalApiRouteImport.update({
+  id: '/external-api',
+  path: '/external-api',
   getParentRoute: () => rootRouteImport,
 } as any)
 const BridgeRoute = BridgeRouteImport.update({
@@ -38,12 +44,14 @@ const IndexRoute = IndexRouteImport.update({
 export interface FileRoutesByFullPath {
   '/': typeof IndexRoute
   '/bridge': typeof BridgeRoute
+  '/external-api': typeof ExternalApiRoute
   '/library': typeof LibraryRoute
   '/map': typeof MapRoute
 }
 export interface FileRoutesByTo {
   '/': typeof IndexRoute
   '/bridge': typeof BridgeRoute
+  '/external-api': typeof ExternalApiRoute
   '/library': typeof LibraryRoute
   '/map': typeof MapRoute
 }
@@ -51,20 +59,22 @@ export interface FileRoutesById {
   __root__: typeof rootRouteImport
   '/': typeof IndexRoute
   '/bridge': typeof BridgeRoute
+  '/external-api': typeof ExternalApiRoute
   '/library': typeof LibraryRoute
   '/map': typeof MapRoute
 }
 export interface FileRouteTypes {
   fileRoutesByFullPath: FileRoutesByFullPath
-  fullPaths: '/' | '/bridge' | '/library' | '/map'
+  fullPaths: '/' | '/bridge' | '/external-api' | '/library' | '/map'
   fileRoutesByTo: FileRoutesByTo
-  to: '/' | '/bridge' | '/library' | '/map'
-  id: '__root__' | '/' | '/bridge' | '/library' | '/map'
+  to: '/' | '/bridge' | '/external-api' | '/library' | '/map'
+  id: '__root__' | '/' | '/bridge' | '/external-api' | '/library' | '/map'
   fileRoutesById: FileRoutesById
 }
 export interface RootRouteChildren {
   IndexRoute: typeof IndexRoute
   BridgeRoute: typeof BridgeRoute
+  ExternalApiRoute: typeof ExternalApiRoute
   LibraryRoute: typeof LibraryRoute
   MapRoute: typeof MapRoute
 }
@@ -83,6 +93,13 @@ declare module '@tanstack/react-router' {
       path: '/library'
       fullPath: '/library'
       preLoaderRoute: typeof LibraryRouteImport
+      parentRoute: typeof rootRouteImport
+    }
+    '/external-api': {
+      id: '/external-api'
+      path: '/external-api'
+      fullPath: '/external-api'
+      preLoaderRoute: typeof ExternalApiRouteImport
       parentRoute: typeof rootRouteImport
     }
     '/bridge': {
@@ -105,6 +122,7 @@ declare module '@tanstack/react-router' {
 const rootRouteChildren: RootRouteChildren = {
   IndexRoute: IndexRoute,
   BridgeRoute: BridgeRoute,
+  ExternalApiRoute: ExternalApiRoute,
   LibraryRoute: LibraryRoute,
   MapRoute: MapRoute,
 }
