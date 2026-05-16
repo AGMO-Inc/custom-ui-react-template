@@ -5,6 +5,7 @@ const navLinks = [
   { to: '/library', label: 'Library' },
   { to: '/map', label: 'Map' },
   { to: '/bridge', label: 'Bridge' },
+  { to: '/external-api', label: 'External API' },
 ] as const
 
 export function RootLayout() {
