@@ -36,9 +36,7 @@ export function ExternalApiPage() {
   const [bodyText, setBodyText] = useState('{}')
 
   const [pending, setPending] = useState(false)
-  const [responseText, setResponseText] = useState(
-    '응답이 여기에 표시됩니다.',
-  )
+  const [responseText, setResponseText] = useState('응답이 여기에 표시됩니다.')
   const [errorText, setErrorText] = useState<string | null>(null)
 
   const clientRef = useRef<WebSocketClientResult | null>(null)
@@ -189,8 +187,8 @@ export function ExternalApiPage() {
         )}
         {connState === 'ready' && (
           <p className="text-sm text-green-700">
-            초기화 완료 — assigned port: {assignedPort} ·{' '}
-            WebSocket {wsConnected ? '연결됨' : '연결 대기'}
+            초기화 완료 — assigned port: {assignedPort} · WebSocket{' '}
+            {wsConnected ? '연결됨' : '연결 대기'}
           </p>
         )}
         {connState === 'error' && (
@@ -224,9 +222,7 @@ export function ExternalApiPage() {
             <label className="text-sm font-medium text-gray-700">Method</label>
             <select
               value={method}
-              onChange={(event) =>
-                setMethod(event.target.value as HttpMethod)
-              }
+              onChange={(event) => setMethod(event.target.value as HttpMethod)}
               className="w-40 rounded-md border border-gray-300 px-4 py-2 text-sm focus:border-blue-500 focus:ring-1 focus:ring-blue-500 focus:outline-none"
             >
               {HTTP_METHODS.map((m) => (
