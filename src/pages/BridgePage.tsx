@@ -50,7 +50,7 @@ export function BridgePage() {
       BridgeEvent.SETTINGS_UPDATE,
       (nextSettings) => {
         setSettings(nextSettings)
-        appendLog('settings:update 수신')
+        appendLog('settings:update received')
       },
     )
 
@@ -58,7 +58,7 @@ export function BridgePage() {
       BridgeEvent.LOCATION_UPDATE,
       (nextLocation) => {
         setLocation(nextLocation)
-        appendLog('location:update 수신')
+        appendLog('location:update received')
       },
     )
 
@@ -91,12 +91,12 @@ export function BridgePage() {
 
   const requestHaptic = () => {
     bridge.triggerHaptic('success')
-    appendLog('haptic: success 요청')
+    appendLog('haptic: success requested')
   }
 
   const requestVibration = () => {
     bridge.triggerVibration({ duration: 300 })
-    appendLog('vibration: 300ms 요청')
+    appendLog('vibration: 300ms requested')
   }
 
   const sendCustomMessage = () => {
@@ -104,7 +104,7 @@ export function BridgePage() {
       sentAt: new Date().toISOString(),
       source: 'custom-ui-react-template',
     })
-    appendLog('custom message: example:ping 전송')
+    appendLog('custom message: example:ping sent')
   }
 
   const requestFileDownload = () => {
@@ -114,7 +114,7 @@ export function BridgePage() {
       fileName: 'seamos-bridge-example.txt',
       mimeType: 'text/plain',
     })
-    appendLog('file:download 요청')
+    appendLog('file:download requested')
   }
 
   return (
@@ -122,23 +122,23 @@ export function BridgePage() {
       <div>
         <h1 className="text-3xl font-bold text-gray-900">WebView Bridge</h1>
         <p className="mt-2 text-gray-600">
-          <code>@seamos/bridge/webview</code>를 사용해 SeamOS Cockpit 또는 React
-          Native WebView와 settings, location, haptic, vibration, file download,
-          custom message를 주고받는 예제입니다.
+          An example of exchanging settings, location, haptic, vibration, file
+          download, and custom messages with the SeamOS Cockpit or a React
+          Native WebView using <code>@seamos/bridge/webview</code>.
         </p>
       </div>
 
       <div className="rounded-lg border border-gray-200 bg-white p-6 shadow-sm">
-        <h2 className="text-lg font-semibold text-gray-900">런타임 상태</h2>
+        <h2 className="text-lg font-semibold text-gray-900">Runtime status</h2>
         {status === 'available' ? (
           <p className="mt-2 text-sm text-green-700">
-            ReactNativeWebView bridge가 감지되었습니다.
+            ReactNativeWebView bridge detected.
           </p>
         ) : (
           <div className="mt-2 rounded-md bg-yellow-50 p-4 text-sm text-yellow-800">
-            일반 브라우저/Vite 개발 서버에서는 ReactNativeWebView가 없어서
-            native 동작은 수행되지 않습니다. 실제 SeamOS Cockpit WebView 또는
-            테스트 harness에서 확인하세요.
+            In a regular browser / Vite dev server, ReactNativeWebView is not
+            available, so native actions are not performed. Verify in an actual
+            SeamOS Cockpit WebView or a test harness.
           </div>
         )}
       </div>
@@ -149,7 +149,7 @@ export function BridgePage() {
           <pre className="mt-4 overflow-x-auto rounded-md bg-gray-50 p-4 text-sm text-gray-700">
             {settings
               ? formatJson(settings)
-              : 'settings가 아직 주입되지 않았습니다.'}
+              : 'settings have not been injected yet.'}
           </pre>
         </div>
         <div className="rounded-lg border border-gray-200 bg-white p-6 shadow-sm">
@@ -157,13 +157,13 @@ export function BridgePage() {
           <pre className="mt-4 overflow-x-auto rounded-md bg-gray-50 p-4 text-sm text-gray-700">
             {location
               ? formatJson(location)
-              : 'location이 아직 주입되지 않았습니다.'}
+              : 'location has not been injected yet.'}
           </pre>
         </div>
       </div>
 
       <div className="rounded-lg border border-gray-200 bg-white p-6 shadow-sm">
-        <h2 className="text-lg font-semibold text-gray-900">Native 요청</h2>
+        <h2 className="text-lg font-semibold text-gray-900">Native requests</h2>
         <div className="mt-4 flex flex-wrap gap-3">
           <button
             onClick={requestHaptic}
@@ -196,7 +196,7 @@ export function BridgePage() {
         <h2 className="text-lg font-semibold text-gray-900">Bridge log</h2>
         <ul className="mt-4 space-y-1 text-sm text-gray-600">
           {logs.length === 0 ? (
-            <li>아직 bridge 이벤트가 없습니다.</li>
+            <li>No bridge events yet.</li>
           ) : (
             logs.map((entry) => <li key={entry.id}>{entry.message}</li>)
           )}

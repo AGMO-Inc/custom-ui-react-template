@@ -34,7 +34,7 @@ export function HomePage() {
   const [initError, setInitError] = useState<string | null>(null)
   const [message, setMessage] = useState('')
   const [restResult, setRestResult] = useState<string>(
-    'REST 응답이 여기에 표시됩니다.',
+    'The REST response will be displayed here.',
   )
   const [wsLog, setWsLog] = useState<string[]>([])
   const [wsConnected, setWsConnected] = useState(false)
@@ -139,7 +139,7 @@ export function HomePage() {
   const fetchStatus = async () => {
     if (connectionState !== 'ready') return
 
-    setRestResult('GET /api/example/status 요청 중...')
+    setRestResult('Requesting GET /api/example/status...')
 
     try {
       const response = await seamosFetch('/api/example/status')
@@ -160,7 +160,7 @@ export function HomePage() {
   const sendCommand = async () => {
     if (connectionState !== 'ready') return
 
-    setRestResult('POST /api/example/commands 요청 중...')
+    setRestResult('Requesting POST /api/example/commands...')
 
     try {
       const response = await seamosFetch('/api/example/commands', {
@@ -195,33 +195,35 @@ export function HomePage() {
       <div>
         <h1 className="text-3xl font-bold text-gray-900">Home</h1>
         <p className="mt-2 text-gray-600">
-          @seamos/connect를 사용한 SeamOS REST/WebSocket 통신 예제 페이지
+          Example page for SeamOS REST/WebSocket communication using
+          @seamos/connect
         </p>
         <p className="mt-2 text-gray-600">
-          SeamOS 런타임은 <code>get_assigned_ports</code> 엔드포인트를 제공해야
-          하며, 템플릿 예제는 할당된 포트로 REST와 WebSocket을 연결합니다.
+          The SeamOS runtime must provide the <code>get_assigned_ports</code>
+          endpoint, and this template example connects REST and WebSocket over
+          the assigned port.
         </p>
       </div>
 
       <div className="rounded-lg border border-gray-200 bg-white p-6 shadow-sm">
         <h2 className="mb-4 text-lg font-semibold text-gray-900">
-          Connect 초기화 상태
+          Connect Initialization Status
         </h2>
         {connectionState === 'initializing' && (
-          <p className="text-sm text-gray-600">포트 정보를 초기화하는 중...</p>
+          <p className="text-sm text-gray-600">Initializing port information...</p>
         )}
         {connectionState === 'ready' && (
           <p className="text-sm text-green-700">
-            초기화 완료 — assigned port: {assignedPort}
+            Initialization complete — assigned port: {assignedPort}
           </p>
         )}
         {connectionState === 'error' && (
           <div className="space-y-2 text-sm text-red-700">
-            <p>초기화 실패: {initError}</p>
+            <p>Initialization failed: {initError}</p>
             <p>
-              로컬 Vite 개발 서버만 실행한 상태라면 정상적으로 실패할 수
-              있습니다. 실제 SeamOS 런타임 또는 <code>get_assigned_ports</code>
-              를 제공하는 개발 프록시에서 다시 테스트하세요.
+              If only the local Vite dev server is running, this failure is
+              expected. Test again against the actual SeamOS runtime or a
+              development proxy that provides <code>get_assigned_ports</code>.
             </p>
           </div>
         )}
@@ -229,12 +231,12 @@ export function HomePage() {
 
       <div className="rounded-lg border border-gray-200 bg-white p-6 shadow-sm">
         <h2 className="mb-4 text-lg font-semibold text-gray-900">
-          REST 통신 예제
+          REST Communication Example
         </h2>
         <p className="mb-4 text-sm text-gray-600">
-          <code>seamosFetch(path, init)</code>는 할당된 포트로 HTTP 요청을
-          보냅니다. 예제 endpoint는 앱 개발자가 실제 API에 맞게 교체해야 하는
-          placeholder입니다.
+          <code>seamosFetch(path, init)</code> sends an HTTP request over the
+          assigned port. The example endpoint is a placeholder that the app
+          developer must replace with the real API.
         </p>
         <div className="mb-4 flex flex-wrap gap-3">
           <button
@@ -259,12 +261,13 @@ export function HomePage() {
 
       <div className="rounded-lg border border-gray-200 bg-white p-6 shadow-sm">
         <h2 className="mb-4 text-lg font-semibold text-gray-900">
-          WebSocket 통신 예제
+          WebSocket Communication Example
         </h2>
         <p className="mb-4 text-sm text-gray-600">
-          <code>createWebSocketClient('/ws/example')</code>처럼 leading slash를
-          포함한 path만 전달합니다. host와 port는 @seamos/connect가 SeamOS
-          런타임에서 받은 assigned port로 자동 구성합니다.
+          Pass only a path that includes a leading slash, as in{' '}
+          <code>createWebSocketClient('/ws/example')</code>. The host and port
+          are configured automatically by @seamos/connect using the assigned
+          port received from the SeamOS runtime.
         </p>
         <div className="mb-4 flex flex-wrap gap-3">
           <button
@@ -272,13 +275,13 @@ export function HomePage() {
             disabled={!isReady}
             className="rounded-md bg-blue-600 px-4 py-2 text-sm font-medium text-white hover:bg-blue-700 disabled:cursor-not-allowed disabled:bg-gray-300"
           >
-            WebSocket 연결
+            Connect WebSocket
           </button>
           <button
             onClick={handleClose}
             className="rounded-md border border-gray-300 bg-white px-4 py-2 text-sm font-medium text-gray-700 hover:bg-gray-50"
           >
-            연결 종료
+            Close Connection
           </button>
         </div>
         <div className="flex gap-3">
@@ -287,7 +290,7 @@ export function HomePage() {
             value={message}
             onChange={(event) => setMessage(event.target.value)}
             onKeyDown={(event) => event.key === 'Enter' && handleSend()}
-            placeholder="WebSocket 메시지를 입력하세요"
+            placeholder="Enter a WebSocket message"
             className="flex-1 rounded-md border border-gray-300 px-4 py-2 text-sm focus:border-blue-500 focus:ring-1 focus:ring-blue-500 focus:outline-none"
           />
           <button
@@ -295,12 +298,12 @@ export function HomePage() {
             disabled={!wsConnected}
             className="rounded-md bg-blue-600 px-4 py-2 text-sm font-medium text-white hover:bg-blue-700 disabled:cursor-not-allowed disabled:bg-gray-300"
           >
-            전송
+            Send
           </button>
         </div>
         <ul className="mt-4 space-y-1 text-sm text-gray-600">
           {wsLog.length === 0 ? (
-            <li>WebSocket 로그가 여기에 표시됩니다.</li>
+            <li>WebSocket logs will be displayed here.</li>
           ) : (
             wsLog.map((entry, index) => (
               <li key={`${entry}-${index}`}>{entry}</li>
@@ -311,84 +314,86 @@ export function HomePage() {
 
       <div className="rounded-lg border border-gray-200 bg-white p-6 shadow-sm">
         <h2 className="mb-4 text-lg font-semibold text-gray-900">
-          프로젝트 구조
+          Project Structure
         </h2>
         <pre className="overflow-x-auto rounded-md bg-gray-50 p-4 text-sm text-gray-700">
           {`src/
-├── main.tsx            # 앱 엔트리포인트
-├── router.tsx          # 해시 라우터 설정
+├── main.tsx            # App entry point
+├── router.tsx          # Hash router configuration
 ├── providers.tsx       # QueryClient + RouterProvider
-├── App.css             # Tailwind CSS 진입점
-├── routes/             # 파일 기반 라우팅 (자동 생성)
-│   ├── __root.tsx      # 루트 레이아웃
-│   ├── index.tsx       # 홈 페이지 라우트
-│   ├── library.tsx     # 라이브러리 안내 페이지 라우트
-│   ├── map.tsx         # @seamos/map-preset 지도 예제 라우트
-│   └── bridge.tsx      # @seamos/bridge WebView 예제 라우트
+├── App.css             # Tailwind CSS entry point
+├── routes/             # File-based routing (auto-generated)
+│   ├── __root.tsx      # Root layout
+│   ├── index.tsx       # Home page route
+│   ├── library.tsx     # Library guide page route
+│   ├── map.tsx         # @seamos/map-preset map example route
+│   └── bridge.tsx      # @seamos/bridge WebView example route
 ├── layouts/
-│   └── RootLayout.tsx  # 공통 레이아웃 (네비게이션)
+│   └── RootLayout.tsx  # Shared layout (navigation)
 └── pages/
-    ├── HomePage.tsx    # Connect REST/WebSocket 예제
-    ├── LibraryPage.tsx # SeamOS 라이브러리 안내
-    ├── MapPage.tsx     # MapLibre/PMTiles 지도 예제
-    └── BridgePage.tsx  # WebView/native bridge 예제`}
+    ├── HomePage.tsx    # Connect REST/WebSocket example
+    ├── LibraryPage.tsx # SeamOS library guide
+    ├── MapPage.tsx     # MapLibre/PMTiles map example
+    └── BridgePage.tsx  # WebView/native bridge example`}
         </pre>
       </div>
 
       <div className="rounded-lg border border-gray-200 bg-white p-6 shadow-sm">
         <h2 className="mb-4 text-lg font-semibold text-gray-900">
-          주요 의존성
+          Key Dependencies
         </h2>
         <div className="space-y-3 text-sm text-gray-600">
           <div className="flex items-start gap-3">
             <span className="font-mono font-semibold text-gray-900">
               React 19
             </span>
-            <span>— UI 렌더링 라이브러리</span>
+            <span>— UI rendering library</span>
           </div>
           <div className="flex items-start gap-3">
             <span className="font-mono font-semibold text-gray-900">
               TanStack Router
             </span>
             <span>
-              — 타입 안전한 파일 기반 라우팅. 해시 라우팅으로 정적 배포 지원
+              — Type-safe file-based routing. Hash routing enables static
+              deployment
             </span>
           </div>
           <div className="flex items-start gap-3">
             <span className="font-mono font-semibold text-gray-900">
               TanStack Query
             </span>
-            <span>— 서버 상태 관리 및 데이터 페칭. DevTools 포함</span>
+            <span>— Server state management and data fetching. Includes DevTools</span>
           </div>
           <div className="flex items-start gap-3">
             <span className="font-mono font-semibold text-gray-900">
               Tailwind CSS v4
             </span>
-            <span>— 유틸리티 기반 CSS 프레임워크</span>
+            <span>— Utility-first CSS framework</span>
           </div>
           <div className="flex items-start gap-3">
             <span className="font-mono font-semibold text-gray-900">Vite</span>
-            <span>— 빌드 도구. HMR, 코드 스플리팅, 상대 경로 빌드 지원</span>
+            <span>— Build tool. Supports HMR, code splitting, and relative-path builds</span>
           </div>
           <div className="flex items-start gap-3">
             <span className="font-mono font-semibold text-gray-900">
               @seamos/connect
             </span>
             <span>
-              — SeamOS 런타임 assigned port 기반 REST/WebSocket 연결 헬퍼
+              — REST/WebSocket connection helper based on the SeamOS runtime
+              assigned port
             </span>
           </div>
           <div className="flex items-start gap-3">
             <span className="font-mono font-semibold text-gray-900">
               @seamos/map-preset
             </span>
-            <span>— MapLibre + PMTiles 기반 SeamOS 지도 프리셋</span>
+            <span>— SeamOS map preset based on MapLibre + PMTiles</span>
           </div>
           <div className="flex items-start gap-3">
             <span className="font-mono font-semibold text-gray-900">
               @seamos/bridge
             </span>
-            <span>— Cockpit/WebView native 연동 브릿지</span>
+            <span>— Cockpit/WebView native integration bridge</span>
           </div>
         </div>
       </div>

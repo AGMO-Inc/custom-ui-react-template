@@ -36,7 +36,7 @@ export function ExternalApiPage() {
   const [bodyText, setBodyText] = useState('{}')
 
   const [pending, setPending] = useState(false)
-  const [responseText, setResponseText] = useState('응답이 여기에 표시됩니다.')
+  const [responseText, setResponseText] = useState('The response will be displayed here.')
   const [errorText, setErrorText] = useState<string | null>(null)
 
   const clientRef = useRef<WebSocketClientResult | null>(null)
@@ -113,7 +113,7 @@ export function ExternalApiPage() {
         !client.socket ||
         client.socket.readyState !== WebSocket.OPEN
       ) {
-        reject(new Error('WebSocket이 연결되어 있지 않습니다.'))
+        reject(new Error('WebSocket is not connected.'))
         return
       }
 
@@ -122,13 +122,13 @@ export function ExternalApiPage() {
       try {
         reqHeader = headersText.trim() ? JSON.parse(headersText) : {}
       } catch {
-        reject(new Error('헤더(Headers) JSON 파싱 실패'))
+        reject(new Error('Failed to parse Headers JSON'))
         return
       }
       try {
         reqBody = bodyText.trim() ? JSON.parse(bodyText) : {}
       } catch {
-        reject(new Error('바디(Body) JSON 파싱 실패'))
+        reject(new Error('Failed to parse Body JSON'))
         return
       }
 
@@ -136,7 +136,7 @@ export function ExternalApiPage() {
       const cid = `UI-${Date.now()}-${counterRef.current}`
       const timer = setTimeout(() => {
         pendingRef.current.delete(cid)
-        reject(new Error(`요청 타임아웃 (cid=${cid})`))
+        reject(new Error(`Request timed out (cid=${cid})`))
       }, REQUEST_TIMEOUT_MS)
       pendingRef.current.set(cid, { resolve, reject, timer })
 
@@ -153,7 +153,7 @@ export function ExternalApiPage() {
     if (connState !== 'ready' || pending) return
     setPending(true)
     setErrorText(null)
-    setResponseText('요청 전송 중...')
+    setResponseText('Sending request...')
     try {
       const data = await callExternalApi()
       setResponseText(
@@ -161,7 +161,7 @@ export function ExternalApiPage() {
       )
     } catch (error) {
       setErrorText(error instanceof Error ? error.message : 'Unknown error')
-      setResponseText('응답이 여기에 표시됩니다.')
+      setResponseText('The response will be displayed here.')
     } finally {
       setPending(false)
     }
@@ -174,36 +174,39 @@ export function ExternalApiPage() {
       <div>
         <h1 className="text-3xl font-bold text-gray-900">External API</h1>
         <p className="mt-2 text-gray-600">
-          엔드포인트 · 헤더 · 메소드 · 바디를 입력해 백엔드로 전송하면, 백엔드가
-          Cloud 플러그인을 경유해 외부 API를 호출하고 응답을 WebSocket으로 다시
-          푸시합니다 (비동기 Pattern B).
+          Enter the endpoint, headers, method, and body and send them to the
+          backend. The backend then calls the external API through the Cloud
+          plugin and pushes the response back over WebSocket (asynchronous
+          Pattern B).
         </p>
       </div>
 
       <div className="rounded-lg border border-gray-200 bg-white p-6 shadow-sm">
-        <h2 className="mb-4 text-lg font-semibold text-gray-900">연결 상태</h2>
+        <h2 className="mb-4 text-lg font-semibold text-gray-900">
+          Connection Status
+        </h2>
         {connState === 'initializing' && (
-          <p className="text-sm text-gray-600">포트 정보를 초기화하는 중...</p>
+          <p className="text-sm text-gray-600">Initializing port information...</p>
         )}
         {connState === 'ready' && (
           <p className="text-sm text-green-700">
-            초기화 완료 — assigned port: {assignedPort} · WebSocket{' '}
-            {wsConnected ? '연결됨' : '연결 대기'}
+            Initialization complete — assigned port: {assignedPort} · WebSocket{' '}
+            {wsConnected ? 'connected' : 'waiting for connection'}
           </p>
         )}
         {connState === 'error' && (
           <div className="space-y-2 text-sm text-red-700">
-            <p>초기화 실패: {initError}</p>
+            <p>Initialization failed: {initError}</p>
             <p>
-              로컬 Vite 개발 서버만 실행한 상태라면 정상적으로 실패할 수
-              있습니다. 실제 SeamOS 런타임에서 다시 테스트하세요.
+              If only the local Vite dev server is running, this failure is
+              expected. Test again on the actual SeamOS runtime.
             </p>
           </div>
         )}
       </div>
 
       <div className="rounded-lg border border-gray-200 bg-white p-6 shadow-sm">
-        <h2 className="mb-4 text-lg font-semibold text-gray-900">요청</h2>
+        <h2 className="mb-4 text-lg font-semibold text-gray-900">Request</h2>
         <div className="space-y-4">
           <div className="flex flex-col gap-1">
             <label className="text-sm font-medium text-gray-700">
@@ -262,15 +265,15 @@ export function ExternalApiPage() {
             disabled={!isReady || pending}
             className="rounded-md bg-blue-600 px-4 py-2 text-sm font-medium text-white hover:bg-blue-700 disabled:cursor-not-allowed disabled:bg-gray-300"
           >
-            {pending ? '요청 중...' : '요청 전송'}
+            {pending ? 'Requesting...' : 'Send Request'}
           </button>
         </div>
       </div>
 
       <div className="rounded-lg border border-gray-200 bg-white p-6 shadow-sm">
-        <h2 className="mb-4 text-lg font-semibold text-gray-900">응답</h2>
+        <h2 className="mb-4 text-lg font-semibold text-gray-900">Response</h2>
         {errorText && (
-          <p className="mb-3 text-sm text-red-700">에러: {errorText}</p>
+          <p className="mb-3 text-sm text-red-700">Error: {errorText}</p>
         )}
         <pre className="overflow-x-auto rounded-md bg-gray-50 p-4 text-sm text-gray-700">
           {responseText}
